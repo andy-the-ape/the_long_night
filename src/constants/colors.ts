@@ -1,4 +1,5 @@
 export const nightTheme = {
+    primary: '#FFB302',
     background: '#FFFF', 
     Special: '#b71c1c', 
     accent: '#ffa726', 

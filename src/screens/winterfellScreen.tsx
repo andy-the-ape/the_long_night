@@ -8,6 +8,8 @@ import GOTCharacterDetails from "../components/GOTComponents/GOTCharacterDetails
 
 const WinterfellScreen: React.FC = () => {
   const [characters, setCharacters] = useState<any[]>([]);
+  const [selectedCharacterId, setSelectedCharacterId] = useState<number | null>(null);
+  const [selectedForBattleIds, setSelectedForBattleIds] = useState<number[]>([]);
 
   useEffect(() => {
     const getCharacters = async () => {
@@ -18,18 +20,38 @@ const WinterfellScreen: React.FC = () => {
     getCharacters();
   }, []);
 
-  const onToggle = () => {};
+  const onInteractToggle = (id: number) => {
+    setSelectedCharacterId((prev) => (prev === id ? null : id));
+  };
+
+  const onSelectForBattleToggle = (id: number) => {
+    setSelectedForBattleIds((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((selectedId) => selectedId !== id);
+      } else if (prev.length < 3) {
+        return [...prev, id];
+      } else {
+        return prev;
+      }
+    });
+  };
 
   return (
     <View style={styles.container}>
       <GOTHeader/>
-      <GOTCharacterDetails />
+      {selectedCharacterId !== null && (
+        <GOTCharacterDetails 
+        onToggle={onSelectForBattleToggle} 
+        characterId={selectedCharacterId}
+        charactersSelected={selectedForBattleIds} 
+        isSelected={selectedForBattleIds.includes(selectedCharacterId)} />
+      )}
       <Text style={styles.screenTitle}>Characters</Text>
       <FlatList
         data={characters}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <CharacterCard character={item} onToggle={onToggle} />
+          <CharacterCard character={item} onToggle={onInteractToggle} />
         )}
       />
     </View>

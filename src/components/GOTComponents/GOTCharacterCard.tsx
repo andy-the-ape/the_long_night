@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet } from 'react-native';
 import { nightTheme } from '../../constants/colors';
+import GOTButton from './GOTButton';
 
 type CharacterCardProps = {
   character: any;
@@ -15,9 +16,8 @@ const CharacterCard: React.FC<CharacterCardProps> = ({ character, onToggle }) =>
         <Text style={styles.name}>{character.name}</Text>
         <Text style={styles.title}>{character.title}</Text>
       </View>
-      <TouchableOpacity style={styles.button} onPress={() => onToggle(character.id)}>
-        <Text style={styles.buttonText}>Interact</Text>
-      </TouchableOpacity>
+      <GOTButton onPress={() => onToggle(character.id)} title="Interact">
+      </GOTButton>
     </View>
   );
 };
@@ -39,16 +39,6 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
-  },
-  button: {
-    borderRadius: 5,
-    backgroundColor: nightTheme.background,
-    padding: 10,
-  },
-  buttonText: {
-    color: nightTheme.highlight,
-    fontWeight: 'bold',
-    padding: 5,
   },
   name: {
     fontSize: 18,
