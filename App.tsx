@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import * as Font from 'expo-font';
 import LoadingScreen from './src/components/GOTComponents/loadingScreen';
 import StackNavigator from './src/navigation/stackNavigator';
+import { Provider } from './src/context/context';
 
 
 const App: React.FC = () => {
@@ -24,9 +25,11 @@ const App: React.FC = () => {
   }
 
   return (
-    <NavigationContainer>
-    <StackNavigator/>
-    </NavigationContainer>
+    <Provider>
+      <NavigationContainer>
+      <StackNavigator/>
+      </NavigationContainer>
+    </Provider>
   );
 };
 

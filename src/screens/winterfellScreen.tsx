@@ -5,16 +5,19 @@ import { nightTheme } from "../constants/colors";
 import GOTHeader from "../components/GOTComponents/GOTHeader";
 import CharacterCard from "../components/GOTComponents/GOTCharacterCard";
 import GOTCharacterDetails from "../components/GOTComponents/GOTCharacterDetails";
+import { useGlobalState } from "../context/context";
+import { useNavigation } from '@react-navigation/native';
 
 const WinterfellScreen: React.FC = () => {
+  const navigation = useNavigation(); // Initialize navigation
   // Existing: State to store the list of characters
   const [characters, setCharacters] = useState<any[]>([]);
 
   // New: State to track the currently selected character for viewing details
   const [selectedCharacterId, setSelectedCharacterId] = useState<number | null>(null);
 
-  // New: State to track the list of characters selected for battle
-  const [selectedForBattleIds, setSelectedForBattleIds] = useState<number[]>([]);
+  // New: Global state to track the list of characters selected for battle
+  const { selectedCharactersForBattle, setSelectedCharactersForBattle } = useGlobalState();
 
   // Existing: Fetches the list of characters when the component mounts
   useEffect(() => {
@@ -31,19 +34,32 @@ const WinterfellScreen: React.FC = () => {
     setSelectedCharacterId((prev) => (prev === id ? null : id));
   };
 
-  // New: Toggles a character's selection for battle, allowing up to 3 characters
   const onSelectForBattleToggle = (id: number) => {
-    setSelectedForBattleIds((prev) => {
-      if (prev.includes(id)) {
-        // Remove the character from the selected list if already selected
-        return prev.filter((selectedId) => selectedId !== id);
+    setSelectedCharactersForBattle((prev) => {
+      let updatedSelection;
+  
+      if (prev.some((char) => char.id === id)) {
+        // Remove character if already selected
+        updatedSelection = prev.filter((char) => char.id !== id);
       } else if (prev.length < 3) {
-        // Add the character if less than 3 are selected
-        return [...prev, id];
+        // Add character if less than 3 selected
+        const selectedChar = characters.find((char) => char.id === id);
+        updatedSelection = selectedChar ? [...prev, selectedChar] : prev;
       } else {
-        // No changes if already 3 are selected
-        return prev;
+        updatedSelection = prev; // No changes if already 3 are selected
       }
+  
+      // Close character details if this character's ID matches the currently selected one
+      if (id === selectedCharacterId) {
+        setSelectedCharacterId(null);
+      }
+  
+      // Navigate to HomeScreen if 3 characters are selected
+      if (updatedSelection.length === 3) {
+        navigation.navigate('HomeScreen');
+      }
+  
+      return updatedSelection;
     });
   };
 
@@ -55,8 +71,10 @@ const WinterfellScreen: React.FC = () => {
         <GOTCharacterDetails 
           onToggle={onSelectForBattleToggle} // Pass handler for battle selection
           characterId={selectedCharacterId} // Pass the ID of the selected character for details
-          charactersSelected={selectedForBattleIds} // Pass the list of selected characters for battle
-          isSelected={selectedForBattleIds.includes(selectedCharacterId)} // Indicate if this character is selected for details
+          charactersSelectedForBattle={selectedCharactersForBattle.map((char) => char.name)} // Pass the list of selected characters for battle
+          isSelected={selectedCharactersForBattle.some(
+            (char) => char.id === selectedCharacterId
+          )} // Indicate if this character is selected for details
         />
       )}
       <Text style={styles.screenTitle}>Characters</Text>

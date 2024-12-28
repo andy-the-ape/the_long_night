@@ -8,20 +8,17 @@ type CharacterDetailsProps = {
   characterId?: number; // Existing: Prop for the currently viewed character ID
   onToggle: (id: number) => void; // New: Callback function to handle selecting/deselecting a character
   isSelected: boolean; // New: Flag to indicate if the character is selected
-  charactersSelected: number[]; // New: List of IDs for currently selected characters
+  charactersSelectedForBattle: string[]; // New: List of IDs for currently selected characters
 };
 
 const CharacterDetails: React.FC<CharacterDetailsProps> = ({
   characterId,
   onToggle,
   isSelected,
-  charactersSelected,
+  charactersSelectedForBattle,
 }) => {
   // Existing: State to store data for the currently viewed character
   const [character, setCharacter] = useState<any | null>(null);
-
-  // New: State to store the details of all selected characters
-  const [selectedCharacters, setSelectedCharacters] = useState<any[]>([]);
 
   // Existing: Fetches data for the currently viewed character
   useEffect(() => {
@@ -33,17 +30,6 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
     };
     getCharacter();
   }, [characterId]);
-
-  // New: Fetches data for all currently selected characters
-  useEffect(() => {
-    const getSelectedCharacters = async () => {
-      const selectedData = await Promise.all(
-        charactersSelected.map((id) => fetchCharacterById(id))
-      );
-      setSelectedCharacters(selectedData);
-    };
-    getSelectedCharacters();
-  }, [charactersSelected]);
 
   // Existing: Renders an empty view if no character is loaded
   if (!character) {
@@ -63,12 +49,12 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
           title={isSelected ? "Deselect" : "Select for Battle"}
         />
         <Text style={styles.buttonContainer}>
-          {charactersSelected.length} Characters selected:
+          {charactersSelectedForBattle.length} Characters selected:
         </Text>
         <FlatList
-          data={selectedCharacters}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <Text style={styles.listText} >* {item.fullName}</Text>}
+          data={charactersSelectedForBattle}
+          keyExtractor={(item) => item.toString()}
+          renderItem={({ item }) => <Text style={styles.listText} >* {item}</Text>}
         />
       </View>
     </View>
