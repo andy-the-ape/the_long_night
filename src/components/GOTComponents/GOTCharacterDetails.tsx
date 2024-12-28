@@ -5,10 +5,10 @@ import { nightTheme } from "../../constants/colors";
 import GOTButton from "./GOTButton";
 
 type CharacterDetailsProps = {
-  characterId?: number;
-  onToggle: (id: number) => void;
-  isSelected: boolean;
-  charactersSelected: number[];
+  characterId?: number; // Existing: Prop for the currently viewed character ID
+  onToggle: (id: number) => void; // New: Callback function to handle selecting/deselecting a character
+  isSelected: boolean; // New: Flag to indicate if the character is selected
+  charactersSelected: number[]; // New: List of IDs for currently selected characters
 };
 
 const CharacterDetails: React.FC<CharacterDetailsProps> = ({
@@ -17,9 +17,13 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
   isSelected,
   charactersSelected,
 }) => {
+  // Existing: State to store data for the currently viewed character
   const [character, setCharacter] = useState<any | null>(null);
+
+  // New: State to store the details of all selected characters
   const [selectedCharacters, setSelectedCharacters] = useState<any[]>([]);
 
+  // Existing: Fetches data for the currently viewed character
   useEffect(() => {
     const getCharacter = async () => {
       if (characterId !== undefined) {
@@ -30,6 +34,7 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
     getCharacter();
   }, [characterId]);
 
+  // New: Fetches data for all currently selected characters
   useEffect(() => {
     const getSelectedCharacters = async () => {
       const selectedData = await Promise.all(
@@ -40,6 +45,7 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
     getSelectedCharacters();
   }, [charactersSelected]);
 
+  // Existing: Renders an empty view if no character is loaded
   if (!character) {
     return <View />;
   }

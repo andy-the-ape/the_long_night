@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import { nightTheme } from '../../constants/colors';
-import GOTButton from './GOTButton';
+import GOTButton from './GOTButton'; // New: Replaced TouchableOpacity with reusable GOTButton component
 
 type CharacterCardProps = {
-  character: any;
-  onToggle: (id: number) => void;
+  character: any; // Existing: Prop for character data
+  onToggle: (id: number) => void; // Existing: Callback function to handle interaction
 };
 
 const CharacterCard: React.FC<CharacterCardProps> = ({ character, onToggle }) => {
@@ -16,8 +16,11 @@ const CharacterCard: React.FC<CharacterCardProps> = ({ character, onToggle }) =>
         <Text style={styles.name}>{character.name}</Text>
         <Text style={styles.title}>{character.title}</Text>
       </View>
-      <GOTButton onPress={() => onToggle(character.id)} title="Interact">
-      </GOTButton>
+      {/* New: Replaced the old TouchableOpacity with a reusable GOTButton */}
+      <GOTButton 
+        onPress={() => onToggle(character.id)} // Calls the interaction handler with the character's ID
+        title="Interact" // Button label
+      />
     </View>
   );
 };
