@@ -5,11 +5,13 @@ import { nightTheme } from "../constants/colors";
 import GOTHeader from "../components/GOTComponents/GOTHeader";
 import CharacterCard from "../components/GOTComponents/GOTCharacterCard";
 import GOTCharacterDetails from "../components/GOTComponents/GOTCharacterDetails";
-import { useGlobalState } from "../context/context";
-import { useNavigation } from '@react-navigation/native';
+import { useGlobalState } from "../context/context"; // New: Import global state context
+import { useNavigation } from '@react-navigation/native'; // New: Import navigation for screen transitions
+
 
 const WinterfellScreen: React.FC = () => {
   const navigation = useNavigation(); // Initialize navigation
+
   // Existing: State to store the list of characters
   const [characters, setCharacters] = useState<any[]>([]);
 
@@ -22,8 +24,8 @@ const WinterfellScreen: React.FC = () => {
   // Existing: Fetches the list of characters when the component mounts
   useEffect(() => {
     const getCharacters = async () => {
-      const data = await fetchCharacters();
-      setCharacters(data);
+      const data = await fetchCharacters(); // Fetch characters from API
+      setCharacters(data); // Update local state with fetched data
     };
 
     getCharacters();
@@ -31,9 +33,10 @@ const WinterfellScreen: React.FC = () => {
 
   // New: Toggles the currently selected character for viewing details
   const onInteractToggle = (id: number) => {
-    setSelectedCharacterId((prev) => (prev === id ? null : id));
+    setSelectedCharacterId((prev) => (prev === id ? null : id)); // Select or deselect a character for viewing details
   };
 
+  // New: Toggles a character's selection for battle
   const onSelectForBattleToggle = (id: number) => {
     setSelectedCharactersForBattle((prev) => {
       let updatedSelection;
@@ -51,7 +54,7 @@ const WinterfellScreen: React.FC = () => {
   
       // Close character details if this character's ID matches the currently selected one
       if (id === selectedCharacterId) {
-        setSelectedCharacterId(null);
+        setSelectedCharacterId(null); // Close character details
       }
   
       // Navigate to HomeScreen if 3 characters are selected
@@ -59,7 +62,7 @@ const WinterfellScreen: React.FC = () => {
         navigation.navigate('HomeScreen');
       }
   
-      return updatedSelection;
+      return updatedSelection; // Update global state
     });
   };
 
@@ -80,9 +83,9 @@ const WinterfellScreen: React.FC = () => {
       <Text style={styles.screenTitle}>Characters</Text>
       <FlatList
         data={characters}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id.toString()} // Use character ID as the key
         renderItem={({ item }) => (
-          <CharacterCard character={item} onToggle={onInteractToggle} />
+          <CharacterCard character={item} onToggle={onInteractToggle} /> // Render each character card
         )}
       />
     </View>

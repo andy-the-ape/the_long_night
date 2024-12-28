@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import * as Font from 'expo-font';
 import LoadingScreen from './src/components/GOTComponents/loadingScreen';
 import StackNavigator from './src/navigation/stackNavigator';
-import { Provider } from './src/context/context';
+import { Provider } from './src/context/context'; // Context provider for managing global state
 
 
 const App: React.FC = () => {
@@ -25,9 +25,10 @@ const App: React.FC = () => {
   }
 
   return (
+    // Wrap the entire app in the Provider component to enable global state management
     <Provider>
       <NavigationContainer>
-      <StackNavigator/>
+        <StackNavigator/>
       </NavigationContainer>
     </Provider>
   );

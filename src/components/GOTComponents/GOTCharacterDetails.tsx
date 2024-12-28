@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Image, FlatList, StyleSheet } from "react-native";
 import { fetchCharacterById } from "../../services/fetchCharacters";
 import { nightTheme } from "../../constants/colors";
-import GOTButton from "./GOTButton";
+import GOTButton from "./GOTButton"; // New: Import GOTButton for the button component
 
 type CharacterDetailsProps = {
   characterId?: number; // Existing: Prop for the currently viewed character ID
@@ -24,8 +24,8 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
   useEffect(() => {
     const getCharacter = async () => {
       if (characterId !== undefined) {
-        const data = await fetchCharacterById(characterId);
-        setCharacter(data);
+        const data = await fetchCharacterById(characterId); // Fetch character details
+        setCharacter(data); // Set character data in state
       }
     };
     getCharacter();
@@ -43,18 +43,24 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
       <Text style={styles.characterTitle}>{character.title}</Text>
       <Text style={styles.characterFamily}>{character.family}</Text>
       <Text style={styles.characterId}>ID: {character.id}</Text>
+
+      {/* New: Button to select/deselect the character */}
       <View style={styles.buttonContainer}>
         <GOTButton
-          onPress={() => onToggle(character.id)}
-          title={isSelected ? "Deselect" : "Select for Battle"}
+          onPress={() => onToggle(character.id)} // Call the onToggle function with character ID
+          title={isSelected ? "Deselect" : "Select for Battle"} // Show appropriate button text
         />
+
+        {/* New: Display the number of characters selected */}
         <Text style={styles.buttonContainer}>
-          {charactersSelectedForBattle.length} Characters selected:
+          Characters selected: {charactersSelectedForBattle.length}
         </Text>
+
+        {/* New: List of selected characters */}
         <FlatList
           data={charactersSelectedForBattle}
           keyExtractor={(item) => item.toString()}
-          renderItem={({ item }) => <Text style={styles.listText} >* {item}</Text>}
+          renderItem={({ item }) => <Text style={styles.listText} >* {item}</Text>} // Render each selected character's name
         />
       </View>
     </View>

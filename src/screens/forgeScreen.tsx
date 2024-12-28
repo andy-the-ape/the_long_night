@@ -3,50 +3,54 @@ import { View, Text, StyleSheet, ImageBackground, FlatList, TextStyle, ViewStyle
 import GOTHeader from "../components/GOTComponents/GOTHeader";
 import GOTButton from "../components/GOTComponents/GOTButton";
 import Lightbringer, { Material, SwordType } from "../components/lightBringer";
-import { useGlobalState } from "../context/context";
-import { useNavigation } from '@react-navigation/native';
+import { useGlobalState } from "../context/context"; // Import global state hook
+import { useNavigation } from '@react-navigation/native'; // Import navigation
 
 const ForgeScreen: React.FC = () => {
   const navigation = useNavigation(); // Initialize navigation
-  const { craftedSword, setCraftedSword } = useGlobalState();
+  const { craftedSword, setCraftedSword } = useGlobalState(); // Access global state for the crafted sword
 
+  // State for selected material, initialized to either the globally stored material or a default
   const [selectedMaterial, setSelectedMaterial] = useState<Material>(
     (craftedSword?.material as Material) || Material.ValyrianSteel
   );
+
+  // State for selected sword type, initialized to either the globally stored type or a default
   const [selectedSwordType, setSelectedSwordType] = useState<SwordType>(
     (craftedSword?.type as SwordType) || SwordType.Greatsword
   );
 
+  // Function to render selectable options for materials and sword types
   const renderOption = (
-    options: string[],
-    selected: string,
-    onSelect: (option: string) => void,
-    buttonStyle: StyleProp<ViewStyle>,
-    textStyle: StyleProp<TextStyle>
+    options: string[], // List of options to display
+    selected: string, // Currently selected option
+    onSelect: (option: string) => void, // Callback for when an option is selected
+    buttonStyle: StyleProp<ViewStyle>, // Style for the buttons
+    textStyle: StyleProp<TextStyle> // Style for the text
   ) => (
     <FlatList
       data={options}
       horizontal
-      keyExtractor={(item) => item}
+      keyExtractor={(item) => item} // Use option name as key
       contentContainerStyle={styles.optionColumn}
       renderItem={({ item }) => (
         <GOTButton
           title={item}
-          onPress={() => onSelect(item)}
+          onPress={() => onSelect(item)} // Handle option selection
           buttonStyle={StyleSheet.flatten([
             buttonStyle,
-            selected === item && styles.optionButtonSelected,
+            selected === item && styles.optionButtonSelected, // Highlight the selected button
           ])}
           textStyle={StyleSheet.flatten([
             textStyle,
-            selected === item && styles.optionTextSelected,
+            selected === item && styles.optionTextSelected, // Highlight the selected text
           ])}
         />
       )}
     />
   );
 
-    // Dynamically load the image based on the swordType
+    // Function to dynamically load the image based on the sword type
     const getSwordImage = (type: SwordType) => {
       switch (type) {
         case SwordType.Greatsword:
@@ -56,18 +60,19 @@ const ForgeScreen: React.FC = () => {
         case SwordType.Shortsword:
           return require('../../assets/images/swordIcons/shortsword.png');
         default:
-          return require('../../assets/images/swordIcons/shortsword.png'); // Fallback
+          return require('../../assets/images/swordIcons/shortsword.png'); // Fallback for unsupported types
       }
     };
 
+  // Function to handle the crafting of the sword
   const handleCraftSword = () => {
     setCraftedSword({
-      material: selectedMaterial,
-      type: selectedSwordType,
-      imageUrl: getSwordImage(selectedSwordType)
+      material: selectedMaterial, // Store the selected material globally
+      type: selectedSwordType, // Store the selected sword type globally
+      imageUrl: getSwordImage(selectedSwordType), // Store the corresponding image URL globally
     });
 
-    navigation.navigate('HomeScreen'); // Navigate to HomeScreen
+    navigation.navigate('HomeScreen'); // Navigate to the HomeScreen after crafting the sword
   }
 
   return (
@@ -80,7 +85,7 @@ const ForgeScreen: React.FC = () => {
         {/* Dark Overlay */}
         <View style={styles.overlay} />
           <View style={styles.content}>
-            {/* Render Lightbringer dynamically */}
+            {/* Render the Lightbringer component dynamically based on selected options */}
             <Lightbringer material={selectedMaterial} swordType={selectedSwordType} imageUrl={getSwordImage(selectedSwordType)} />
 
             <View style={styles.optionsContainer}>
@@ -88,9 +93,9 @@ const ForgeScreen: React.FC = () => {
               <View style={styles.group}>
                 <Text style={styles.label}>Material:</Text>
                 {renderOption(
-                  Object.values(Material),
-                  selectedMaterial,
-                  (option) => setSelectedMaterial(option as Material),
+                  Object.values(Material), // Display all available materials
+                  selectedMaterial, // Currently selected material
+                  (option) => setSelectedMaterial(option as Material), // Update material state on selection
                   styles.optionButton,
                   styles.optionText
                 )}
@@ -100,9 +105,9 @@ const ForgeScreen: React.FC = () => {
             <View style={styles.group}>
               <Text style={styles.label}>Sword Type:</Text>
               {renderOption(
-                Object.values(SwordType),
-                selectedSwordType,
-                (option) => setSelectedSwordType(option as SwordType),
+                Object.values(SwordType), // Display all available sword types
+                selectedSwordType, // Currently selected sword type
+                (option) => setSelectedSwordType(option as SwordType), // Update sword type state on selection
                 styles.optionButton,
                 styles.optionText
               )}
@@ -130,7 +135,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    backgroundColor: "rgba(0, 0, 0, 0.6)", // Add a dark overlay for better contrast
   },
   content: {
     flex: 1,

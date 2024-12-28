@@ -9,36 +9,42 @@ import {
   FlatList,
   Dimensions
 } from "react-native";
-import * as Location from "expo-location";
+import * as Location from "expo-location"; // Added Location module to fetch user's location
 import GOTHeader from "../components/GOTComponents/GOTHeader";
 import GOTButton from "../components/GOTComponents/GOTButton";
 import { nightTheme } from "../constants/colors";
-import { useGlobalState } from "../context/context";
+import { useGlobalState } from "../context/context"; // Added global state to access crafted sword and selected characters
 import Lightbringer from "../components/lightBringer";
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window"); // Use screen dimensions for responsive styling
 
 const BattleScreen: React.FC = () => {
-  // Use the global state for characters and crafted sword
+  // Access global state for selected characters and crafted sword
   const { selectedCharactersForBattle, craftedSword } = useGlobalState();
 
+  // State to store the user's current location coordinates
   const [coordinates, setCoordinates] = useState<{
     latitude: number;
     longitude: number;
   } | null>(null);
+
+  // State to store any error messages related to location fetching
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     const requestPermissions = async () => {
+      // Request location permissions from the user
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied.");
+        setErrorMsg("Permission to access location was denied."); // Set error message if permissions are denied
         return;
       }
     };
     requestPermissions();
-  }, []);
+  }, []); // Runs once when the component mounts
 
+  
+  // Function to fetch the user's current location
   const fetchLocation = async () => {
     try {
       const location = await Location.getCurrentPositionAsync({});
@@ -51,6 +57,7 @@ const BattleScreen: React.FC = () => {
     }
   };
 
+  // Function to render each character card
   const renderCharacter = ({
     item,
   }: {
@@ -73,7 +80,7 @@ const BattleScreen: React.FC = () => {
         {/* Dark Overlay */}
         <View style={styles.overlay} />
         <View style={styles.content}>
-          {/* Render the crafted sword */}
+          {/* Conditionally render the crafted sword or a placeholder message */}
           {craftedSword ? (
             <View style={styles.swordContainer}>
               <Lightbringer material={craftedSword.material} swordType={craftedSword.type} imageUrl={craftedSword.imageUrl}/>
@@ -86,18 +93,19 @@ const BattleScreen: React.FC = () => {
           <Text style={styles.label}>Chosen Characters:</Text>
           {selectedCharactersForBattle.length > 0 ? (
             <FlatList
-              data={selectedCharactersForBattle}
-              renderItem={renderCharacter}
-              keyExtractor={(item) => item.id.toString()}
+            data={selectedCharactersForBattle} // List of selected characters
+            renderItem={renderCharacter} // Render each character card
+              keyExtractor={(item) => item.id.toString()} // Use character ID as a unique key
               contentContainerStyle={styles.charactersList}
               numColumns={3} // Arrange characters in rows of 3
             />
           ) : (
-            <Text style={styles.characterName}>No characters selected!</Text>
+            <Text style={styles.characterName}>No characters selected!</Text> // Placeholder when no characters are selected
           )}
 
-          {/* Location Section */}
+          {/* Button to fetch and display the user's location */}
           <GOTButton onPress={fetchLocation} title="Battle" />
+          {/* Display error message or fetched coordinates */}
           {errorMsg ? (
             <Text style={styles.errorText}>{errorMsg}</Text>
           ) : coordinates ? (
